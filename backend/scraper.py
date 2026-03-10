@@ -84,7 +84,7 @@ def process_text_with_gemini(raw_text, source_name, source_url):
       - amount_offered: E.g., "$100k", "Up to ₹50 Lakhs", "Grant-based" (string)
       - investor: Name of the investing body or government (string)
       - eligibility: Short 1-2 sentence description of who can apply (string)
-      - category: MUST BE EXACTLY ONE OF: "Government Funds", "Private Seed Funds", "Series A", "Idea Stage", or "Others".
+      - category: MUST BE EXACTLY ONE OF: "Government Funds", "Private Seed Funds", "Series A", "Series B & C", "Bridge/Pre-IPO", "Idea Stage", or "Others".
       - apply_link: The official URL to apply. If not explicitly found, use the source URL: {source_url}
       - deadline: The application deadline in "YYYY-MM-DD" format. If unknown or ongoing, output null.
       

@@ -249,6 +249,39 @@ function dummyDataForPreview() {
             category: "Private Seed Funds",
             apply_link: "https://www.100x.vc/",
             deadline: nextMonth.toISOString().split('T')[0]
+        },
+        {
+            id: 4,
+            company_name: "Sequoia Surge - Series A",
+            funding_stage: "Series A",
+            amount_offered: "$1M - $2M",
+            investor: "Sequoia Capital",
+            eligibility: "Proven business model with early market traction.",
+            category: "Series A",
+            apply_link: "https://www.surgeahead.com/",
+            deadline: nextMonth.toISOString().split('T')[0]
+        },
+        {
+            id: 5,
+            company_name: "Tiger Global Growth",
+            funding_stage: "Series B",
+            amount_offered: "$10M+",
+            investor: "Tiger Global",
+            eligibility: "Rapidly scaling startups aiming for market dominance.",
+            category: "Series B & C",
+            apply_link: "https://www.tigerglobal.com/",
+            deadline: nextMonth.toISOString().split('T')[0]
+        },
+        {
+            id: 6,
+            company_name: "Goldman Sachs Bridge Fund",
+            funding_stage: "Bridge/Pre-IPO",
+            amount_offered: "$50M+",
+            investor: "Goldman Sachs",
+            eligibility: "Late-stage startups preparing for a public listing exit.",
+            category: "Bridge/Pre-IPO",
+            apply_link: "https://www.goldmansachs.com/",
+            deadline: nextMonth.toISOString().split('T')[0]
         }
     ];
 }
