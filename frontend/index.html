@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Funds Me - Global Startup Funding Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Funds Me</h1>
+                <p>Discover & Apply to Startup Funds, Grants & Accelerators worldwide.</p>
+                <div class="search-bar-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search by name, stage, or investor...">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Filter Pills -->
+            <div class="filter-section" id="filterContainer">
+                <button class="filter-pill active" data-filter="All">All Funds</button>
+                <button class="filter-pill" data-filter="Government Funds">Government</button>
+                <button class="filter-pill" data-filter="Private Seed Funds">Seed Funds</button>
+                <button class="filter-pill" data-filter="Idea Stage">Idea Stage</button>
+                <button class="filter-pill" data-filter="Series A">Series A</button>
+            </div>
+
+            <!-- Dashboard / Cards Grid -->
+            <div class="cards-grid" id="fundsGrid">
+                <!-- Loader -->
+                <div class="loader-container" id="loader">
+                    <div class="spinner"></div>
+                </div>
+                <!-- Cards will be injected dynamically here -->
+            </div>
+            
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <p>No funds found matching your criteria.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Details Modal (iOS Sheet Style) -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-sheet" id="modalSheet">
+            <div class="modal-drag-handle"></div>
+            <button class="modal-close" id="modalClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div class="modal-content" id="modalContent">
+                <!-- Data injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
