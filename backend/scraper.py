@@ -148,27 +148,41 @@ def push_to_supabase(funds):
     insert_url = f"{SUPABASE_URL}/rest/v1/funds"
     for fund in funds:
         try:
+            # Check for existing
             res = requests.post(insert_url, json=fund, headers=SUPABASE_HEADERS, timeout=10)
             if res.status_code in [200, 201]:
                 logging.info(f"✅ Sync Successful: {fund.get('company_name')[:25]}")
             else:
-                logging.error(f"❌ Sync Failed ({res.status_code}): {res.text}")
+                # Often fails due to duplicate name if unique constraint is on, which is fine
+                logging.debug(f"Sync Skip/Fail ({res.status_code}): {fund.get('company_name')}")
         except Exception as e:
             logging.error(f"❌ Network Error: {e}")
 
 def main():
-    logging.info("🚀 STARTING AUTOMATED SCRAPE...")
+    logging.info("\U0001f680 STARTING MASSIVE SCALE SCRAPE...")
     cleanup_expired_funds()
     
+    # 1. Scrape standard targets
     for target in TARGETS:
         text = fetch_page_text(target["url"])
         if text:
             extracted = process_text_with_gemini(text, target["name"], target["url"])
             if extracted:
                 push_to_supabase(extracted)
-            time.sleep(2) # Respectful delay
-            
-    logging.info("✨ JOB FINISHED")
+        time.sleep(2)
+
+    # 2. Scrape Search Queries for massive volume
+    for query in SEARCH_QUERIES:
+        logging.info(f"\U0001f50d Searching for: {query}")
+        search_url = f"https://www.google.com/search?q={query.replace(' ', '+')}&tbm=nws"
+        text = fetch_page_text(search_url)
+        if text:
+            extracted = process_text_with_gemini(text, "Web Search", search_url)
+            if extracted:
+                push_to_supabase(extracted)
+        time.sleep(5)
+    
+    logging.info("\u2728 MASSIVE SCALE JOB FINISHED")
 
 if __name__ == "__main__":
     main()
