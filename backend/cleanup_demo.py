@@ -9,14 +9,14 @@ SUPABASE_HEADERS = {
     "Authorization": f"Bearer {SUPABASE_KEY}"
 }
 
-def clean_demo():
-    url = f"{SUPABASE_URL}/rest/v1/funds?company_name=ilike.Strategic%20Growth%20Fund*"
-    res = requests.delete(url, headers=SUPABASE_HEADERS)
-    print(f"Strategic Growth Cleanup: {res.status_code}")
+def clean_all_demos():
+    print("Clearing all demo patterns...")
+    patterns = ["Strategic Growth%", "Fresh Opportunity%", "Premium Strategic%", "Fresh Opportunity%"]
     
-    url2 = f"{SUPABASE_URL}/rest/v1/funds?company_name=ilike.Fresh%20Opportunity*"
-    res2 = requests.delete(url2, headers=SUPABASE_HEADERS)
-    print(f"Fresh Opportunity Cleanup: {res2.status_code}")
+    for pattern in patterns:
+        url = f"{SUPABASE_URL}/rest/v1/funds?company_name=ilike.{pattern}"
+        res = requests.delete(url, headers=SUPABASE_HEADERS)
+        print(f"Pattern '{pattern}' Cleanup: {res.status_code}")
 
 if __name__ == "__main__":
-    clean_demo()
+    clean_all_demos()

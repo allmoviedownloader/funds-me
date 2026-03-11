@@ -33,62 +33,51 @@ SUPABASE_HEADERS = {
 }
 
 TARGETS = [
-    {"name": "Inc42", "url": "https://inc42.com/category/funding/", "type": "news"},
-    {"name": "TechCrunch", "url": "https://techcrunch.com/category/startups/", "type": "news"},
+    {"name": "Inc42 Funding", "url": "https://inc42.com/category/funding/", "type": "news"},
+    {"name": "TechCrunch Startups", "url": "https://techcrunch.com/category/startups/", "type": "news"},
+    {"name": "Tech in Asia Funding", "url": "https://www.techinasia.com/tag/funding", "type": "news"},
+    {"name": "Sifted Europe", "url": "https://sifted.eu/funding", "type": "news"},
     {"name": "Y Combinator", "url": "https://www.ycombinator.com/apply", "type": "portal"},
-    {"name": "Techstars", "url": "https://www.techstars.com/accelerators", "type": "portal"},
+    {"name": "Techstars Global", "url": "https://www.techstars.com/accelerators", "type": "portal"},
     {"name": "Startup India", "url": "https://seedfund.startupindia.gov.in/", "type": "portal"},
+    {"name": "F6S Programs", "url": "https://www.f6s.com/programs", "type": "portal"},
+    {"name": "Pioneer.app", "url": "https://pioneer.app/", "type": "portal"},
+    {"name": "AngelList Global", "url": "https://www.angellist.com/blog", "type": "news"},
     {"name": "BIRAC BIG", "url": "https://birac.nic.in/desc_new.php?id=77", "type": "portal"},
-    {"name": "MeitY Hub", "url": "https://meitystartuphub.in/schemes", "type": "portal"},
-    {"name": "100X.VC", "url": "https://www.100x.vc/", "type": "portal"},
-    {"name": "Antler", "url": "https://www.antler.co/india", "type": "portal"},
+    {"name": "Antler Global", "url": "https://www.antler.co/", "type": "portal"},
     {"name": "Google for Startups", "url": "https://startup.google.com/accelerator/", "type": "portal"},
-    {"name": "LetsVenture", "url": "https://letsventure.com/", "type": "portal"},
-    {"name": "AngelList India", "url": "https://www.angellistindia.com/", "type": "portal"},
-    {"name": "Venture Catalysts", "url": "https://venturecatalysts.in/", "type": "portal"},
-    {"name": "ah! Ventures", "url": "https://www.ahventures.in/", "type": "portal"},
-    {"name": "Ketto", "url": "https://www.ketto.org/", "type": "portal"},
-    {"name": "ImpactGuru", "url": "https://www.impactguru.com/", "type": "portal"},
-    {"name": "Pepcorns", "url": "https://www.pepcorns.com/", "type": "portal"},
+    {"name": "MeitY Hub", "url": "https://meitystartuphub.in/schemes", "type": "portal"},
     {"name": "Invest India", "url": "https://www.investindia.gov.in/social-impact-funding", "type": "portal"},
     {"name": "CSR Box", "url": "https://csrbox.org/list-NGO-grants-India", "type": "portal"},
-    {"name": "StartupHub Bengal", "url": "https://startuphub.wb.gov.in/", "type": "portal"},
-    {"name": "Kerala Startup Mission", "url": "https://startupmission.kerala.gov.in/schemes", "type": "portal"},
-    {"name": "Karnataka Startup", "url": "https://startup.karnataka.gov.in/", "type": "portal"},
-    {"name": "NITI Aayog AIM", "url": "https://aim.gov.in/challenges.php", "type": "portal"},
-    {"name": "MSME Idea Hackathon", "url": "https://my.msme.gov.in/incubation/", "type": "portal"},
-    {"name": "T-Hub Hyderabad", "url": "https://t-hub.co/programs/", "type": "portal"},
-    {"name": "iCreate Gujarat", "url": "https://icreate.org.in/", "type": "portal"},
-    {"name": "HDFC SmartUp", "url": "https://www.hdfcbank.com/personal/useful-links/smartup-for-startups", "type": "portal"},
-    {"name": "YES Bank ScaleUp", "url": "https://www.yesbank.in/business-banking/startup-banking", "type": "portal"}
+    {"name": "Crunchbase Funding News", "url": "https://news.crunchbase.com/category/funding/", "type": "news"}
 ]
 
 SEARCH_QUERIES = [
-    "latest startup grants India March 2025 news",
-    "government innovation challenges India 2025",
-    "startup accelerators accepting global applications 2025",
-    "CSR funding announcements for startups India 2025",
-    "fresh equity free funding for AI startups 2025",
-    "Ministry of Electronics seed fund schemes 2025",
-    "Agriculture startup funding India 2025 fresh",
-    "Healthcare innovation grants India 2025",
-    "Clean energy startup funds 2025 global",
-    "EdTech startup grants India 2025 announced",
-    "site:linkedin.com 'startup competition' 2025 India",
-    "site:twitter.com 'startup grant' 2025 India",
-    "Latest incubator intake 2025 India news",
-    "Fintech grants Africa 2025",
-    "EU innovation grants for AI startups 2025",
-    "Singapore startup funding news 2025",
-    "UAE tech startup grants 2025",
-    "Global climate tech funding announcements March 2025",
-    "Female founder grants 2025 global",
-    "Deep tech research grants 2025",
-    "Social entrepreneurship funding India 2025",
-    "Biotech startup seed rounds 2025 news",
-    "Web3 and blockchain startup grants 2025",
-    "Robotics innovation challenge 2025",
-    "SpaceTech startup funding rounds 2025"
+    "latest startup grants global March 2025 news",
+    "worldwide innovation challenges 2025 open to all",
+    "equity free funding global startups 2025",
+    "UN innovation grants 2025 worldwide",
+    "EU Horizon Europe grants global participation 2025",
+    "USAID innovation challenges worldwide 2025",
+    "Bill & Melinda Gates Foundation grants 2025",
+    "Google for Startups global programs 2025 news",
+    "Microsoft for Startups global benefits 2025",
+    "AWS Activate credits and grants global 2025",
+    "Founders Institute global intake 2025",
+    "Pioneer.app global winners news 2025",
+    "Antler global residency intake 2025",
+    "Entrepreneur First global application 2025",
+    "Techstars global accelerators deadline 2025",
+    "Y Combinator global applications 2025 news",
+    "Fintech grants worldwide 2025 news",
+    "Climate tech grants global 2025",
+    "Healthcare innovation challenges global 2025",
+    "Social impact grants worldwide 2025",
+    "site:f6s.com 'open for applications' 2025",
+    "site:pioneer.app 'apply' 2025",
+    "site:angel.co 'funding' 2025 global",
+    "site:techcrunch.com 'grant' 2025 worldwide",
+    "site:sifted.eu 'funding' 2025 global"
 ]
 
 def fetch_page_text(url):
@@ -115,6 +104,7 @@ def process_text_with_gemini(raw_text, source_name, source_url):
     
     prompt = f"""
     Extract startup funding, grants, or seed fund programs from the text below.
+    CRITICAL: Identify if the program is "Global" or "Worldwide" (available to founders anywhere).
     Source: {source_name} ({source_url})
     
     JSON Fields:
@@ -122,11 +112,11 @@ def process_text_with_gemini(raw_text, source_name, source_url):
     - funding_stage: Idea Stage, Seed, Grant, Series A, Series B & C, or Bridge/Pre-IPO.
     - amount_offered: Amount (e.g. ₹50 Lakhs, $100k, Undisclosed).
     - investor: Government Ministry, VC, or Organization providing funds.
-    - eligibility: 1 sentence description of who can apply.
-    - challenge_info: If this is a 'Challenge' or 'Hackathon', describe the specific problem statement or goal (e.g., 'Solving waste management in smart cities').
+    - eligibility: 1 sentence description. MUST mention if it's "Worldwide" or restricted to a specific country.
+    - challenge_info: If this is a 'Challenge' or 'Hackathon', describe the specific problem statement.
     - category: Government Funds, Private Seed Funds, Series A, Series B & C, Bridge/Pre-IPO, Idea Stage, or Others.
     - apply_link: Official apply URL. Default to {source_url}.
-    - release_date: YYYY-MM-DD (Date when the fund was announced or posted) or null.
+    - release_date: YYYY-MM-DD (Announcement date) or null.
     - deadline: YYYY-MM-DD or null.
     
     RETURN ONLY A CLEAN JSON ARRAY. NO MARKDOWN.

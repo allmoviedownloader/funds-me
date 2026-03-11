@@ -285,49 +285,7 @@ function setupEventListeners() {
 
 // Dummy Data for Preview if table is empty
 function dummyDataForPreview() {
-    const nextMonth = new Date();
-    const lastWeek = new Date();
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-    lastWeek.setDate(lastWeek.getDate() - 7);
-    
-    return [
-        {
-            id: 1,
-            company_name: "Startup India Seed Fund",
-            funding_stage: "Seed",
-            amount_offered: "Up to ₹50 Lakhs",
-            investor: "Government of India",
-            eligibility: "DPIIT-recognized startups incorporated less than 2 years ago.",
-            category: "Government Funds",
-            apply_link: "https://seedfund.startupindia.gov.in/",
-            release_date: lastWeek.toISOString().split('T')[0],
-            deadline: nextMonth.toISOString().split('T')[0]
-        },
-        {
-            id: 2,
-            company_name: "Y Combinator W25",
-            funding_stage: "Idea Stage",
-            amount_offered: "$500,000",
-            investor: "Y Combinator",
-            eligibility: "Global startups looking for seed capital and intense 3-month mentoring.",
-            category: "Private Seed Funds",
-            apply_link: "https://www.ycombinator.com/apply",
-            release_date: lastWeek.toISOString().split('T')[0],
-            deadline: nextMonth.toISOString().split('T')[0]
-        },
-        {
-            id: 3,
-            company_name: "100X.VC Class 13",
-            funding_stage: "Pre-Seed",
-            amount_offered: "₹1.25 Crore",
-            investor: "100X.VC",
-            eligibility: "Founders with a scalable tech business idea. iSAFE notes used.",
-            category: "Private Seed Funds",
-            apply_link: "https://www.100x.vc/",
-            release_date: lastWeek.toISOString().split('T')[0],
-            deadline: nextMonth.toISOString().split('T')[0]
-        }
-    ];
+    return []; // No more demo data
 }
 
 // Boot
