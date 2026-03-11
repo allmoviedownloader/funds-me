@@ -110,6 +110,11 @@ function renderFunds() {
                 (f.investor && f.investor.toLowerCase().includes(name.toLowerCase()))
             )
         );
+    } else if (activeFilter === 'Idea Stage') {
+        filtered = allFunds.filter(f => 
+            (f.funding_stage && f.funding_stage.toLowerCase().includes('idea')) ||
+            (f.category && f.category.toLowerCase().includes('idea'))
+        );
     }
     
     // Filter by Search

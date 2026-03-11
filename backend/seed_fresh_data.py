@@ -28,13 +28,15 @@ def generate_funds():
         deadline = (today + timedelta(days=20 + i%30)).strftime("%Y-%m-%d")
         
         funds.append({
-            "company_name": f"Premium Strategic Fund #{200+i} - {inv}",
+            "company_name": f"Strategic Growth Fund #{200+i} - {inv}",
             "funding_stage": stage,
             "amount_offered": f"₹{20 + i%80} Lakhs" if "India" in inv or "Tata" in inv else f"${100 + i%400}k",
             "investor": inv,
             "eligibility": "Tech-enabled startups with a minimum viable product and early traction.",
+            "challenge_info": "Focusing on sustainability, fintech, or deep-tech solutions for Indian markets." if i % 4 == 0 else None,
             "category": cat,
             "apply_link": "https://example.com/apply",
+            "release_date": rel_date,
             "deadline": deadline
         })
     return funds

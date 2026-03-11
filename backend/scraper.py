@@ -65,7 +65,7 @@ TARGETS = [
 
 SEARCH_QUERIES = [
     "latest startup grants India March 2025 news",
-    "new government innovation challenges India 2025",
+    "government innovation challenges India 2025",
     "startup accelerators accepting global applications 2025",
     "CSR funding announcements for startups India 2025",
     "fresh equity free funding for AI startups 2025",
@@ -76,8 +76,19 @@ SEARCH_QUERIES = [
     "EdTech startup grants India 2025 announced",
     "site:linkedin.com 'startup competition' 2025 India",
     "site:twitter.com 'startup grant' 2025 India",
-    "site:facebook.com 'innovation challenge' 2025 India",
-    "Latest incubator intake 2025 India news"
+    "Latest incubator intake 2025 India news",
+    "Fintech grants Africa 2025",
+    "EU innovation grants for AI startups 2025",
+    "Singapore startup funding news 2025",
+    "UAE tech startup grants 2025",
+    "Global climate tech funding announcements March 2025",
+    "Female founder grants 2025 global",
+    "Deep tech research grants 2025",
+    "Social entrepreneurship funding India 2025",
+    "Biotech startup seed rounds 2025 news",
+    "Web3 and blockchain startup grants 2025",
+    "Robotics innovation challenge 2025",
+    "SpaceTech startup funding rounds 2025"
 ]
 
 def fetch_page_text(url):

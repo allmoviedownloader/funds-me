@@ -12,12 +12,12 @@ count = r.headers.get('Content-Range', '').split('/')[-1]
 print(f"Total Funds in DB: {count}")
 
 # Check for release_date presence
-url_check = f"{os.getenv('SUPABASE_URL')}/rest/v1/funds?select=company_name,deadline,category&limit=5&order=created_at.desc"
+url_check = f"{os.getenv('SUPABASE_URL')}/rest/v1/funds?select=company_name,release_date,deadline,category&limit=5&order=created_at.desc"
 r_check = requests.get(url_check, headers=headers)
 print("\nRecent Entries Sample:")
 data = r_check.json()
 if isinstance(data, list):
     for item in data:
-        print(f"- {item.get('company_name')}: Category={item.get('category')}, Deadline={item.get('deadline')}")
+        print(f"- {item.get('company_name')}: Posted={item.get('release_date')}, Deadline={item.get('deadline')}")
 else:
     print(f"Error fetching sample: {data}")
