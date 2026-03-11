@@ -2,7 +2,7 @@
 const SUPABASE_URL = 'https://ukeeqgbsvjsazoqqpmxu.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZWVxZ2JzdmpzYXpvcXFwbXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODIyNjYsImV4cCI6MjA4ODY1ODI2Nn0.tNPM0LQ2JSkHpBh-Gj-_8Q8StIsxSDXXdjca1b6cbbc';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // DOM Elements
 const fundsGrid = document.getElementById('fundsGrid');
@@ -23,24 +23,34 @@ let searchQuery = '';
 
 // Initialize
 async function init() {
-    await fetchFunds();
-    setupEventListeners();
+    console.log("Initializing Dashboard...");
+    setupEventListeners(); // Setup listeners first so UI is responsive
+    try {
+        // Race fetch against a 5s timeout
+        const fetchPromise = fetchFunds();
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Fetch Timeout")), 5000)
+        );
+        await Promise.race([fetchPromise, timeoutPromise]);
+    } catch (e) {
+        console.warn("Initial fetch timed out or failed. Using fallback.", e);
+        if (allFunds.length === 0) {
+            allFunds = dummyDataForPreview();
+            renderFunds();
+        }
+        loader.style.display = 'none';
+    }
 }
 
 // Fetch data from Supabase
 async function fetchFunds() {
     try {
         loader.style.display = 'flex';
-        // Get today's date in YYYY-MM-DD
         const today = new Date().toISOString().split('T')[0];
         
-        // Fetch funds where deadline is >= today (or no deadline specified)
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('funds')
             .select('*')
-            // Frontend failsafe: don't show expired funds
-            // The backend cron will also delete these from DB
-            .gte('deadline', today)
             .order('created_at', { ascending: false });
 
         if (error) {
@@ -56,12 +66,17 @@ async function fetchFunds() {
             
             // Fallback for visual testing if DB is empty
             if (allFunds.length === 0) {
+                 console.info("Database is empty. Loading dummy data for preview.");
                  allFunds = dummyDataForPreview();
             }
         }
         
     } catch (err) {
         console.error('Error fetching funds:', err);
+        // Show a helpful hint on the page if it's a 404/PGRST205
+        if (err.message && err.message.includes('PGRST205')) {
+             alert("Database table 'funds' is missing. Please follow the setup instructions in the chat.");
+        }
         allFunds = dummyDataForPreview(); // Fallback for UI preview
     } finally {
         loader.style.display = 'none';

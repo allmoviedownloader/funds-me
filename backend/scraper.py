@@ -3,183 +3,144 @@ import re
 import json
 import logging
 import requests
-from bs4 import BeautifulSoup
-from supabase import create_client, Client
 from datetime import datetime
+import socket
+from bs4 import BeautifulSoup
+import time
+
+# --- PATCH FOR FORCING IPv4 ---
+orig_getaddrinfo = socket.getaddrinfo
+def patched_getaddrinfo(*args, **kwargs):
+    res = orig_getaddrinfo(*args, **kwargs)
+    return [r for r in res if r[0] == socket.AF_INET]
+socket.getaddrinfo = patched_getaddrinfo
 
 # Configure Logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # --- CONFIGURATION ---
-GEMINI_API_KEY = "AIzaSyC5RqzNZGAAXzlmcYNxEl98fI_5p7hLCY4"
+GEMINI_API_KEY = "AIzaSyD1eCR-MKcWPrhFg4gOLf0tCyMOLVV2E1w"
 SUPABASE_URL = "https://ukeeqgbsvjsazoqqpmxu.supabase.co"
-# We use the anon key. If RLS is enabled on Supabase, the user might need to disable it or use service_role key.
-# For this script we assume the Anon key has insert/delete privileges or RLS is disabled.
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZWVxZ2JzdmpzYXpvcXFwbXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODIyNjYsImV4cCI6MjA4ODY1ODI2Nn0.tNPM0LQ2JSkHpBh-Gj-_8Q8StIsxSDXXdjca1b6cbbc"
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+SUPABASE_HEADERS = {
+    "apikey": SUPABASE_KEY,
+    "Authorization": f"Bearer {SUPABASE_KEY}",
+    "Content-Type": "application/json"
+}
 
-# Target URLs to scrape
 TARGETS = [
-    {
-        "name": "Inc42 Funding News",
-        "url": "https://inc42.com/category/funding/",
-        "type": "news"
-    },
-    {
-        "name": "YourStory Funding",
-        "url": "https://yourstory.com/funding",
-        "type": "news"
-    },
-    {
-        "name": "Startup India Seed Fund",
-        "url": "https://seedfund.startupindia.gov.in/",
-        "type": "portal"
-    }
+    {"name": "Inc42", "url": "https://inc42.com/category/funding/", "type": "news"},
+    {"name": "TechCrunch", "url": "https://techcrunch.com/category/startups/", "type": "news"},
+    {"name": "Y Combinator", "url": "https://www.ycombinator.com/apply", "type": "portal"},
+    {"name": "Techstars", "url": "https://www.techstars.com/accelerators", "type": "portal"},
+    {"name": "Startup India", "url": "https://seedfund.startupindia.gov.in/", "type": "portal"},
+    {"name": "BIRAC BIG", "url": "https://birac.nic.in/desc_new.php?id=77", "type": "portal"},
+    {"name": "MeitY Hub", "url": "https://meitystartuphub.in/schemes", "type": "portal"},
+    {"name": "100X.VC", "url": "https://www.100x.vc/", "type": "portal"}
 ]
 
-# --- PHASE 1: THE CRAWLER ---
 def fetch_page_text(url):
-    """Fetches the HTML of a page and extracts clean text."""
     logging.info(f"Crawling {url}...")
     try:
+        # Better User-Agent to avoid 403s
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5"
         }
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
-        
         soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Remove scripts, styles, headers, footers to reduce noise
-        for elm in soup(["script", "style", "nav", "footer", "header"]):
-            elm.extract()
-            
-        text = soup.get_text(separator=' ', strip=True)
-        # Condense whitespace
-        text = re.sub(r'\s+', ' ', text)
-        
-        # We only return the first 15000 characters to avoid overflowing Gemini token limits
-        return text[:15000]
+        for elm in soup(["script", "style", "nav", "footer", "header", "aside"]): elm.extract()
+        return re.sub(r'\s+', ' ', soup.get_text(strip=True))[:12000]
     except Exception as e:
-        logging.error(f"Failed to crawl {url}: {e}")
+        logging.error(f"Crawl Fail {url}: {e}")
         return None
 
-# --- PHASE 2: THE LOGIC GATE (AI) ---
 def process_text_with_gemini(raw_text, source_name, source_url):
-    """Passes raw text to Gemini and asks it to return a clean JSON array."""
-    logging.info(f"Processing data from {source_name} with Gemini AI...")
-    
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+    logging.info(f"AI Analysing content from {source_name}...")
+    api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={GEMINI_API_KEY}"
     
     prompt = f"""
-    You are an expert AI extraction tool. Your job is to read the following raw scraped text from '{source_name}' ({source_url}) and extract startup funding opportunities, grants, or seed funds.
+    Extract startup funding, grants, or seed fund programs from the text below.
+    Source: {source_name} ({source_url})
     
-    CRITICAL INSTRUCTIONS:
-    - Output ONLY a valid Google JSON Array of objects. Do not include markdown formatting like ```json.
-    - If no funding opportunities are found in the text, output an empty array [].
-    - Standardize the data into this EXACT schema:
-      - company_name: Name of the fund, program, or startup being funded (string)
-      - funding_stage: E.g., "Idea Stage", "Seed", "Series A", "Grant", "Pre-Seed" (string)
-      - amount_offered: E.g., "$100k", "Up to ₹50 Lakhs", "Grant-based" (string)
-      - investor: Name of the investing body or government (string)
-      - eligibility: Short 1-2 sentence description of who can apply (string)
-      - category: MUST BE EXACTLY ONE OF: "Government Funds", "Private Seed Funds", "Series A", "Series B & C", "Bridge/Pre-IPO", "Idea Stage", or "Others".
-      - apply_link: The official URL to apply. If not explicitly found, use the source URL: {source_url}
-      - deadline: The application deadline in "YYYY-MM-DD" format. If unknown or ongoing, output null.
-      
-    RAW TEXT TO PROCESS:
+    JSON Fields:
+    - company_name: Name of the startup or fund.
+    - funding_stage: Idea Stage, Seed, Grant, Series A, Series B & C, or Bridge/Pre-IPO.
+    - amount_offered: Amount (e.g. $100k, Undisclosed).
+    - investor: Provided by.
+    - eligibility: 1 sentence description.
+    - category: Government Funds, Private Seed Funds, Series A, Series B & C, Bridge/Pre-IPO, Idea Stage, or Others.
+    - apply_link: Official apply URL. Default to {source_url}.
+    - deadline: YYYY-MM-DD or null.
+    
+    RETURN ONLY A CLEAN JSON ARRAY. NO MARKDOWN.
+    ---
+    TEXT:
     {raw_text}
     """
     
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {
-            "temperature": 0.2,
-            "responseMimeType": "application/json"
-        }
+        "generationConfig": {"response_mime_type": "application/json", "temperature": 0.1}
     }
     
-    try:
-        response = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
-        response.raise_for_status()
-        
-        data = response.json()
-        result_text = data['candidates'][0]['content']['parts'][0]['text']
-        
-        # Parse JSON
-        funds = json.loads(result_text)
-        if isinstance(funds, list):
-             return funds
-        else:
-             logging.warning("Gemini did not return a list.")
-             return []
-    except Exception as e:
-        logging.error(f"Gemini API Error: {e}")
-        return []
+    for attempt in range(3):
+        try:
+            res = requests.post(api_url, json=payload, timeout=30)
+            res_json = res.json()
+            
+            if res.status_code == 429:
+                logging.warning(f"Rate limited (429). Retrying in 5s (Attempt {attempt+1})...")
+                time.sleep(5)
+                continue
 
-# --- PHASE 3: DATABASE SYNC & CLEANUP ---
+            if 'candidates' in res_json:
+                result_text = res_json['candidates'][0]['content']['parts'][0]['text']
+                return json.loads(result_text)
+            else:
+                logging.error(f"Gemini AI Response Invalid: {res_json}")
+                return []
+        except Exception as e:
+            logging.error(f"AI Logic Fail: {e}")
+            time.sleep(2)
+    return []
+
 def cleanup_expired_funds():
-    """Deletes entries from Supabase where the deadline has passed."""
-    logging.info("Cleaning up expired funds from Supabase...")
     today = datetime.now().strftime("%Y-%m-%d")
-    
+    logging.info(f"Cleaning up expired funds before {today}...")
     try:
-        # Delete where deadline is less than today
-        # Supabase Python client syntax for delete:
-        res = supabase.table("funds").delete().lt("deadline", today).execute()
-        logging.info(f"Cleanup complete. Deleted {len(res.data)} expired entries.")
-    except Exception as e:
-         logging.error(f"Failed to cleanup old funds: {e}")
+        requests.delete(f"{SUPABASE_URL}/rest/v1/funds?deadline=lt.{today}", headers=SUPABASE_HEADERS, timeout=10)
+    except: pass
 
 def push_to_supabase(funds):
-    """Pushes extracted funds into Supabase."""
-    if not funds:
-         return
-         
-    logging.info(f"Pushing {len(funds)} records to Supabase...")
+    if not funds: return
+    insert_url = f"{SUPABASE_URL}/rest/v1/funds"
     for fund in funds:
-        # Prepare payload
-        payload = {
-            "company_name": fund.get("company_name"),
-            "funding_stage": fund.get("funding_stage"),
-            "amount_offered": fund.get("amount_offered"),
-            "investor": fund.get("investor"),
-            "eligibility": fund.get("eligibility"),
-            "category": fund.get("category"),
-            "apply_link": fund.get("apply_link"),
-            "deadline": fund.get("deadline")
-        }
-        
         try:
-             # Basic duplicate check strategy could be upserting based on apply_link, 
-             # but here we just insert. A unique constraint on Supabase is recommended.
-             supabase.table("funds").insert(payload).execute()
-             logging.info(f"✅ Inserted: {payload['company_name']}")
+            res = requests.post(insert_url, json=fund, headers=SUPABASE_HEADERS, timeout=10)
+            if res.status_code in [200, 201]:
+                logging.info(f"✅ Sync Successful: {fund.get('company_name')[:25]}")
+            else:
+                logging.error(f"❌ Sync Failed ({res.status_code}): {res.text}")
         except Exception as e:
-             logging.error(f"❌ Failed to insert {payload.get('company_name')}: {e}")
+            logging.error(f"❌ Network Error: {e}")
 
-# --- MAIN EXECUTION ---
 def main():
-    logging.info("🚀 Starting Automated Funding Scraper...")
-    
-    # Run Cleanup first
+    logging.info("🚀 STARTING AUTOMATED SCRAPE...")
     cleanup_expired_funds()
     
-    total_funds_extracted = []
-    
     for target in TARGETS:
-        raw_text = fetch_page_text(target["url"])
-        if raw_text:
-             funds = process_text_with_gemini(raw_text, target["name"], target["url"])
-             total_funds_extracted.extend(funds)
-             
-    logging.info(f"🎯 Total funds extracted across all sources: {len(total_funds_extracted)}")
-    
-    # Push to Database
-    push_to_supabase(total_funds_extracted)
-    
-    logging.info("✅ Scraper cycle finished successfully!")
+        text = fetch_page_text(target["url"])
+        if text:
+            extracted = process_text_with_gemini(text, target["name"], target["url"])
+            if extracted:
+                push_to_supabase(extracted)
+            time.sleep(2) # Respectful delay
+            
+    logging.info("✨ JOB FINISHED")
 
 if __name__ == "__main__":
     main()
