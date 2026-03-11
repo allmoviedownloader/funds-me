@@ -228,27 +228,30 @@ function closeModal() {
 
 // WhatsApp Registration
 function registerWhatsApp() {
-    const phoneInput = document.getElementById('whatsappPhone');
-    const interestInput = document.getElementById('whatsappInterest');
+    const phoneInput = document.getElementById('waPhone');
+    const categorySelect = document.getElementById('waCategory');
     const phone = phoneInput.value.trim();
-    const interest = interestInput.value;
+    const category = categorySelect.value;
     
-    if (!phone || phone.length < 10) {
-        alert("Please enter a valid phone number!");
+    if (phone.length < 10) {
+        alert("Please enter a valid WhatsApp number.");
         return;
     }
 
-    // Count matching funds for instant gratification
-    const count = allFunds.filter(f => f.category === interest || interest === 'All').length;
+    // Interactive Trigger Message
+    const msg = encodeURIComponent(`Hi! I want to join Funds Me alerts for ${category}. Please send me the latest details.`);
+    const waLink = `https://wa.me/YOUR_BOT_NUMBER?text=${msg}`;
     
-    const msg = `Successfully joined WhatsApp Alerts! ✅\n\nFound ${count} matching funds for "${interest}".\nRedirecting you to WhatsApp to confirm...`;
-    alert(msg);
-    
-    // Redirect to WhatsApp with a pre-filled message
-    const waMsg = encodeURIComponent(`Hi! I want to receive alerts for ${interest} startup funds on my number ${phone}.`);
-    window.open(`https://wa.me/918260797177?text=${waMsg}`, '_blank');
-    
-    phoneInput.value = '';
+    // UI Feedback
+    const btn = document.querySelector('.whatsapp-btn');
+    btn.innerHTML = 'Connecting to Bot... 🤖';
+    btn.style.background = '#075E54';
+
+    setTimeout(() => {
+        window.open(waLink, '_blank');
+        btn.innerHTML = 'Join Alerts';
+        btn.style.background = '';
+    }, 1500);
 }
 
 // Event Listeners
