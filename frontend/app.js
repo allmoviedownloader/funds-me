@@ -100,11 +100,19 @@ function renderFunds() {
     
     // Filter by Category
     let filtered = allFunds;
-    if (activeFilter !== 'All') {
-        filtered = filtered.filter(f => f.category === activeFilter);
+    if (activeFilter === 'Government Funds') {
+        filtered = allFunds.filter(f => f.category === 'Government Funds');
+    } else if (activeFilter === 'Big Companies') {
+        const bigCorps = ['Google', 'Microsoft', 'Amazon', 'Meta', 'Tata', 'Reliance', 'Adobe', 'Apple', 'Y Combinator', 'Sequoia', 'Tiger Global', 'Goldman Sachs'];
+        filtered = allFunds.filter(f => 
+            bigCorps.some(name => 
+                (f.company_name && f.company_name.toLowerCase().includes(name.toLowerCase())) || 
+                (f.investor && f.investor.toLowerCase().includes(name.toLowerCase()))
+            )
+        );
     }
     
-    // Filter by Search Search
+    // Filter by Search
     if (searchQuery) {
         const q = searchQuery.toLowerCase();
         filtered = filtered.filter(f => 
@@ -202,6 +210,20 @@ function openModal(fund, formattedDeadline) {
 function closeModal() {
     modalOverlay.classList.remove('active');
     document.body.style.overflow = '';
+}
+
+// WhatsApp Registration
+function registerWhatsApp() {
+    const phoneInput = document.getElementById('whatsappPhone');
+    const phone = phoneInput.value.trim();
+    
+    if (!phone || phone.length < 10) {
+        alert("Please enter a valid phone number!");
+        return;
+    }
+    // Simulate cloud sync for now
+    alert("Successfully joined WhatsApp Alerts! ✅\nYou'll receive updates for: " + activeFilter);
+    phoneInput.value = '';
 }
 
 // Event Listeners

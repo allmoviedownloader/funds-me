@@ -57,6 +57,16 @@ TARGETS = [
     {"name": "Karnataka Startup", "url": "https://startup.karnataka.gov.in/", "type": "portal"}
 ]
 
+SEARCH_QUERIES = [
+    "latest startup grants 2025 India",
+    "government innovation challenges 2025",
+    "startup accelerators accepting applications 2025",
+    "CSR funding for startups India 2025",
+    "equity free funding for tech startups 2025",
+    "MSME grants India 2025",
+    "Social impact funding global 2025"
+]
+
 def fetch_page_text(url):
     logging.info(f"Crawling {url}...")
     try:
