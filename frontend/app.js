@@ -90,6 +90,29 @@ async function fetchFunds() {
     }
 }
 
+// Normalize Search Query (Typo tolerance)
+function normalizeQuery(q) {
+    const map = {
+        'india': ['india', 'indian', 'bharat'],
+        'idia': ['india', 'indian', 'idea'],
+        'idea': ['idea', 'early', 'concept'],
+        'fund': ['funding', 'grant', 'capital'],
+        'baisness': ['business', 'startup'],
+        'paisa': ['amount', 'funding', 'money', 'lakhs', 'crore'],
+        'money': ['amount', 'funding', 'lakhs', 'crore'],
+        'co': ['company', 'startup'],
+        'gov': ['government', 'ministry', 'official']
+    };
+    
+    let variants = [q];
+    for (const [key, values] of Object.entries(map)) {
+        if (q.includes(key) || key.includes(q)) {
+            variants = [...variants, ...values];
+        }
+    }
+    return [...new Set(variants)];
+}
+
 // Render Cards
 function renderFunds() {
     fundsGrid.innerHTML = '';
@@ -121,27 +144,31 @@ function renderFunds() {
         });
     }
     
-    // Filter by Search (Smart Search)
+    // Filter by Search (Smart Search with Typo Tolerance)
     if (searchQuery) {
-        const q = searchQuery.toLowerCase();
+        const qRaw = searchQuery.toLowerCase();
+        const queries = normalizeQuery(qRaw);
+        
         filtered = filtered.filter(f => {
-            const companyMatch = (f.company_name || '').toLowerCase().includes(q);
-            const investorMatch = (f.investor || '').toLowerCase().includes(q);
-            const stageMatch = (f.funding_stage || '').toLowerCase().includes(q);
-            const categoryMatch = (f.category || '').toLowerCase().includes(q);
-            const amountMatch = (f.amount_offered || '').toLowerCase().includes(q);
-            
-            // Check for potential amount matches like "100k" or "50 Lakhs"
-            const queryIsNumber = !isNaN(parseFloat(q.replace(/[^0-9.]/g, '')));
-            if (queryIsNumber) {
-                const numericQuery = parseFloat(q.replace(/[^0-9.]/g, ''));
-                const amountText = (f.amount_offered || '').toLowerCase();
-                const numericAmount = parseFloat(amountText.replace(/[^0-9.]/g, ''));
-                if (numericAmount === numericQuery) return true;
-                if (amountText.includes(q)) return true;
-            }
+            return queries.some(q => {
+                const companyMatch = (f.company_name || '').toLowerCase().includes(q);
+                const investorMatch = (f.investor || '').toLowerCase().includes(q);
+                const stageMatch = (f.funding_stage || '').toLowerCase().includes(q);
+                const categoryMatch = (f.category || '').toLowerCase().includes(q);
+                const amountMatch = (f.amount_offered || '').toLowerCase().includes(q);
+                const eligibilityMatch = (f.eligibility || '').toLowerCase().includes(q);
 
-            return companyMatch || investorMatch || stageMatch || categoryMatch || amountMatch;
+                // Check for potential amount matches like "100k" or "50 Lakhs"
+                const queryIsNumber = !isNaN(parseFloat(q.replace(/[^0-9.]/g, '')));
+                if (queryIsNumber) {
+                    const numericQuery = parseFloat(q.replace(/[^0-9.]/g, ''));
+                    const amountText = (f.amount_offered || '').toLowerCase();
+                    const numericAmount = parseFloat(amountText.replace(/[^0-9.]/g, ''));
+                    if (numericAmount === numericQuery) return true;
+                }
+
+                return companyMatch || investorMatch || stageMatch || categoryMatch || amountMatch || eligibilityMatch;
+            });
         });
     }
     
@@ -178,7 +205,7 @@ function renderFunds() {
                     <span class="tag ${stageClass}">${fund.funding_stage || fund.category}</span>
                 </div>
                 <div class="card-amount">${fund.amount_offered || 'Grant'}</div>
-                <div class="card-challenge">${fund.challenge_info ? `<strong>Problem Statement:</strong> ${fund.challenge_info}` : ''}</div>
+                <div class="card-challenge">${fund.challenge_info ? `<strong>Problem:</strong> ${fund.challenge_info}` : ''}</div>
                 <div class="card-details">${fund.eligibility || 'Click to view details.'}</div>
                 <div class="card-footer">
                     <div class="deadline">
@@ -191,14 +218,22 @@ function renderFunds() {
                              <span><strong>Closes:</strong> ${formattedDeadline}</span>
                         </div>
                     </div>
-                    <a href="${fund.apply_link || '#'}" target="_blank" class="apply-btn" onclick="event.stopPropagation()">
-                        Apply
-                    </a>
+                    <div class="card-actions">
+                        <button class="more-info-btn">More Info</button>
+                        <a href="${fund.apply_link || '#'}" target="_blank" class="apply-btn" onclick="event.stopPropagation()">
+                            Apply
+                        </a>
+                    </div>
                 </div>
             `;
             
-            // Click card to open modal
+            // Click card or more info button to open modal
             card.addEventListener('click', () => openModal(fund, formattedDeadline));
+            const infoBtn = card.querySelector('.more-info-btn');
+            infoBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openModal(fund, formattedDeadline);
+            });
             
             fundsGrid.appendChild(card);
         });
@@ -217,6 +252,11 @@ function openModal(fund, formattedDeadline) {
         <div class="modal-section">
             <h3>Funding Stage / Category</h3>
             <p><strong>${fund.funding_stage || 'Not specified'}</strong> &middot; ${fund.category || 'General'}</p>
+        </div>
+        
+        <div class="modal-section">
+            <h3>Problem Statement / Challenge</h3>
+            <p>${fund.challenge_info || 'General innovation and growth support.'}</p>
         </div>
         
         <div class="modal-section">

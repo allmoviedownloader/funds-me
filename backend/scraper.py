@@ -33,58 +33,67 @@ SUPABASE_HEADERS = {
 }
 
 TARGETS = [
-    {"name": "Inc42 Funding", "url": "https://inc42.com/category/funding/", "type": "news"},
-    {"name": "TechCrunch Startups", "url": "https://techcrunch.com/category/startups/", "type": "news"},
-    {"name": "Tech in Asia Funding", "url": "https://www.techinasia.com/tag/funding", "type": "news"},
-    {"name": "Sifted Europe", "url": "https://sifted.eu/funding", "type": "news"},
+    {"name": "Startup India Official", "url": "https://www.startupindia.gov.in/content/sih/en/search.html?type=scheme", "type": "portal"},
+    {"name": "MeitY Startup Hub", "url": "https://meitystartuphub.in/schemes", "type": "portal"},
+    {"name": "BIRAC Projects", "url": "https://birac.nic.in/desc_new.php?id=77", "type": "portal"},
+    {"name": "Ministry of MSME", "url": "https://msme.gov.in/all-schemes", "type": "portal"},
+    {"name": "Invest India Social", "url": "https://www.investindia.gov.in/social-impact-funding", "type": "portal"},
+    {"name": "DST NIDHI PRAYAS", "url": "https://nidhi-prayas.org/", "type": "portal"},
+    {"name": "AGNIi India", "url": "https://www.agnii.gov.in/innovation-challenges", "type": "portal"},
+    {"name": "TDB India", "url": "http://tdb.gov.in/grants/", "type": "portal"},
+    {"name": "Atal Innovation Mission", "url": "https://aim.gov.in/anic.php", "type": "portal"},
+    {"name": "India Science Tech", "url": "https://www.indiascienceandtechnology.gov.in/startup-grants", "type": "portal"},
+    {"name": "UN Innovation Hub", "url": "https://innovation.un.org/", "type": "portal"},
+    {"name": "UNICEF Innovation", "url": "https://www.unicef.org/innovation/apply-funding", "type": "portal"},
+    {"name": "UNESCO IFCD", "url": "https://en.unesco.org/creativity/ifcd/apply", "type": "portal"},
+    {"name": "World Bank Grants", "url": "https://www.worldbank.org/en/about/working-with-us/grants", "type": "portal"},
+    {"name": "Horizon Europe", "url": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/home", "type": "portal"},
+    {"name": "USAID Challenges", "url": "https://www.usaid.gov/innovation-technology-research-hub/challenges", "type": "portal"},
+    {"name": "Grand Challenges", "url": "https://grandchallenges.org/grant-opportunities", "type": "portal"},
+    {"name": "MassChallenge Global", "url": "https://masschallenge.org/apply/", "type": "portal"},
+    {"name": "Thiel Fellowship", "url": "https://thielfellowship.org/", "type": "portal"},
     {"name": "Y Combinator", "url": "https://www.ycombinator.com/apply", "type": "portal"},
-    {"name": "Techstars Global", "url": "https://www.techstars.com/accelerators", "type": "portal"},
-    {"name": "Startup India", "url": "https://seedfund.startupindia.gov.in/", "type": "portal"},
-    {"name": "F6S Programs", "url": "https://www.f6s.com/programs", "type": "portal"},
-    {"name": "Pioneer.app", "url": "https://pioneer.app/", "type": "portal"},
-    {"name": "AngelList Global", "url": "https://www.angellist.com/blog", "type": "news"},
-    {"name": "BIRAC BIG", "url": "https://birac.nic.in/desc_new.php?id=77", "type": "portal"},
-    {"name": "Antler Global", "url": "https://www.antler.co/", "type": "portal"},
-    {"name": "Google for Startups", "url": "https://startup.google.com/accelerator/", "type": "portal"},
-    {"name": "MeitY Hub", "url": "https://meitystartuphub.in/schemes", "type": "portal"},
-    {"name": "Invest India", "url": "https://www.investindia.gov.in/social-impact-funding", "type": "portal"},
-    {"name": "CSR Box", "url": "https://csrbox.org/list-NGO-grants-India", "type": "portal"},
-    {"name": "MIT Innovation", "url": "https://innovation.mit.edu/opportunities/", "type": "portal"},
+    {"name": "Techstars Accelerators", "url": "https://www.techstars.com/accelerators", "type": "portal"},
+    {"name": "MIT Water Prize", "url": "https://www.mitwaterprize.org/", "type": "portal"},
     {"name": "Stanford Startup Garage", "url": "https://www.gsb.stanford.edu/programs/startup-garage", "type": "portal"},
     {"name": "Oxford Seed Fund", "url": "https://www.sbs.ox.ac.uk/oxford-seed-fund", "type": "portal"},
-    {"name": "Harvard Innovation Labs", "url": "https://innovationlabs.harvard.edu/", "type": "portal"},
-    {"name": "UN Innovation Hub", "url": "https://innovation.un.org/", "type": "portal"},
-    {"name": "World Bank SIEF", "url": "https://www.worldbank.org/en/programs/sief-trust-fund", "type": "portal"},
-    {"name": "Horizon Europe", "url": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/home", "type": "portal"},
-    {"name": "Crunchbase Funding News", "url": "https://news.crunchbase.com/category/funding/", "type": "news"}
+    {"name": "Harvard Allston fund", "url": "https://innovationlabs.harvard.edu/allston-venture-fund", "type": "portal"},
+    {"name": "Berkeley SkyDeck", "url": "https://skydeck.berkeley.edu/apply/", "type": "portal"},
+    {"name": "Accelerating Asia", "url": "https://www.acceleratingasia.com/apply", "type": "portal"},
+    {"name": "Antler Global", "url": "https://www.antler.co/apply", "type": "portal"},
+    {"name": "500 Global", "url": "https://500.co/accelerators", "type": "portal"},
+    {"name": "Founders Institute", "url": "https://fi.co/apply", "type": "portal"},
+    {"name": "Crunchbase Funding", "url": "https://news.crunchbase.com/category/funding/", "type": "news"},
+    {"name": "TechCrunch Startups", "url": "https://techcrunch.com/category/startups/", "type": "news"},
+    {"name": "Sifted Europe", "url": "https://sifted.eu/funding", "type": "news"}
 ]
 
 SEARCH_QUERIES = [
-    "latest startup grants global March 2025 news",
-    "worldwide innovation challenges 2025 open to all",
-    "equity free funding global startups 2025",
-    "UN innovation grants 2025 worldwide",
-    "EU Horizon Europe grants global participation 2025",
-    "USAID innovation challenges worldwide 2025",
-    "Bill & Melinda Gates Foundation grants 2025",
-    "Google for Startups global programs 2025 news",
-    "Microsoft for Startups global benefits 2025",
-    "AWS Activate credits and grants global 2025",
-    "Founders Institute global intake 2025",
-    "Pioneer.app global winners news 2025",
-    "Antler global residency intake 2025",
-    "Entrepreneur First global application 2025",
-    "Techstars global accelerators deadline 2025",
-    "Y Combinator global applications 2025 news",
-    "Fintech grants worldwide 2025 news",
-    "Climate tech grants global 2025",
-    "Healthcare innovation challenges global 2025",
-    "Social impact grants worldwide 2025",
-    "site:f6s.com 'open for applications' 2025",
-    "site:pioneer.app 'apply' 2025",
-    "site:angel.co 'funding' 2025 global",
-    "site:techcrunch.com 'grant' 2025 worldwide",
-    "site:sifted.eu 'funding' 2025 global"
+    "official government startup grants India 2025 news",
+    "latest worldwide innovation challenges 2025 open for applications",
+    "equity free funding global startups 2025 official portals",
+    "UN innovation hub grants 2025 announcement",
+    "EU Horizon Europe open calls March 2025",
+    "USAID innovation challenges worldwide 2025 deadline",
+    "Bill & Melinda Gates Foundation grants 2025 sectors",
+    "Google for Startups AI grants global 2025",
+    "Microsoft for Startups founders hub benefits 2025",
+    "AWS Activate credits and grants global 2025 official",
+    "Pioneer.app global winners news 2025 March",
+    "Antler global residency next intake 2025",
+    "Techstars global accelerators upcoming deadlines 2025",
+    "Y Combinator Summer 2025 application status",
+    "India DPIIT recognized startup benefits 2025",
+    "Startup India Seed Fund approved incubators list 2025",
+    "MeitY SAMRIDH scheme intake 2025",
+    "BIRAC BIG grant 25th call 2025",
+    "Climate tech grants global 2025 official lists",
+    "Healthcare innovation challenges worldwide 2025 March",
+    "Social impact grants global founders 2025",
+    "site:f6s.com 'open for applications' 2025 global",
+    "site:startupindia.gov.in 'grant' 2025",
+    "site:innovation.gov 'funding' 2025",
+    "site:sciencedirect.com 'funding opportunity' 2025"
 ]
 
 def fetch_page_text(url):
@@ -209,12 +218,20 @@ def run_task():
     logging.info("--- SCHEDULED TASK FINISHED ---")
 
 def main():
-    # If running manually, it runs once. 
-    # To run every 12 hours on a server, use:
-    # while True:
-    #     run_task()
-    #     time.sleep(12 * 3600)
-    run_task()
+    # To run as a persistent background service, set AUTO_SCRAPE=true
+    auto_mode = os.getenv("AUTO_SCRAPE", "false").lower() == "true"
+    
+    if auto_mode:
+        logging.info("=== AUTOMATED 12H MODE ACTIVATED ===")
+        while True:
+            try:
+                run_task()
+            except Exception as e:
+                logging.error(f"Loop Error: {e}")
+            logging.info("Sleeping for 12 hours...")
+            time.sleep(12 * 3600)
+    else:
+        run_task()
 
 if __name__ == "__main__":
     main()
