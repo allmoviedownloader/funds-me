@@ -54,17 +54,30 @@ TARGETS = [
     {"name": "CSR Box", "url": "https://csrbox.org/list-NGO-grants-India", "type": "portal"},
     {"name": "StartupHub Bengal", "url": "https://startuphub.wb.gov.in/", "type": "portal"},
     {"name": "Kerala Startup Mission", "url": "https://startupmission.kerala.gov.in/schemes", "type": "portal"},
-    {"name": "Karnataka Startup", "url": "https://startup.karnataka.gov.in/", "type": "portal"}
+    {"name": "Karnataka Startup", "url": "https://startup.karnataka.gov.in/", "type": "portal"},
+    {"name": "NITI Aayog AIM", "url": "https://aim.gov.in/challenges.php", "type": "portal"},
+    {"name": "MSME Idea Hackathon", "url": "https://my.msme.gov.in/incubation/", "type": "portal"},
+    {"name": "T-Hub Hyderabad", "url": "https://t-hub.co/programs/", "type": "portal"},
+    {"name": "iCreate Gujarat", "url": "https://icreate.org.in/", "type": "portal"},
+    {"name": "HDFC SmartUp", "url": "https://www.hdfcbank.com/personal/useful-links/smartup-for-startups", "type": "portal"},
+    {"name": "YES Bank ScaleUp", "url": "https://www.yesbank.in/business-banking/startup-banking", "type": "portal"}
 ]
 
 SEARCH_QUERIES = [
-    "latest startup grants 2025 India",
-    "government innovation challenges 2025",
-    "startup accelerators accepting applications 2025",
-    "CSR funding for startups India 2025",
-    "equity free funding for tech startups 2025",
-    "MSME grants India 2025",
-    "Social impact funding global 2025"
+    "latest startup grants India March 2025 news",
+    "new government innovation challenges India 2025",
+    "startup accelerators accepting global applications 2025",
+    "CSR funding announcements for startups India 2025",
+    "fresh equity free funding for AI startups 2025",
+    "Ministry of Electronics seed fund schemes 2025",
+    "Agriculture startup funding India 2025 fresh",
+    "Healthcare innovation grants India 2025",
+    "Clean energy startup funds 2025 global",
+    "EdTech startup grants India 2025 announced",
+    "site:linkedin.com 'startup competition' 2025 India",
+    "site:twitter.com 'startup grant' 2025 India",
+    "site:facebook.com 'innovation challenge' 2025 India",
+    "Latest incubator intake 2025 India news"
 ]
 
 def fetch_page_text(url):
@@ -102,6 +115,7 @@ def process_text_with_gemini(raw_text, source_name, source_url):
     - challenge_info: If this is a 'Challenge' or 'Hackathon', describe the specific problem statement or goal (e.g., 'Solving waste management in smart cities').
     - category: Government Funds, Private Seed Funds, Series A, Series B & C, Bridge/Pre-IPO, Idea Stage, or Others.
     - apply_link: Official apply URL. Default to {source_url}.
+    - release_date: YYYY-MM-DD (Date when the fund was announced or posted) or null.
     - deadline: YYYY-MM-DD or null.
     
     RETURN ONLY A CLEAN JSON ARRAY. NO MARKDOWN.

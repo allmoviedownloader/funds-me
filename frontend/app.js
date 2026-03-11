@@ -137,11 +137,14 @@ function renderFunds() {
             let stageClass = 'tag-stage';
             if (fund.funding_stage && fund.funding_stage.toLowerCase().includes('idea')) stageClass = 'tag-idea';
             
-            // Format deadline date nicely
+            // Format dates nicely
+            const rDate = fund.release_date ? new Date(fund.release_date) : new Date(fund.created_at);
             const dDate = fund.deadline ? new Date(fund.deadline) : null;
+            
+            const formattedRelease = rDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
             const formattedDeadline = dDate ? 
                 dDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year:'numeric' }) : 
-                'Open / Ongoing';
+                'Ongoing';
             
             card.innerHTML = `
                 <div class="card-header">
@@ -156,8 +159,14 @@ function renderFunds() {
                 <div class="card-details">${fund.eligibility || 'Click to view details.'}</div>
                 <div class="card-footer">
                     <div class="deadline">
-                        <svg class="deadline-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                        <span>Deadline: ${formattedDeadline}</span>
+                        <div class="deadline-row">
+                             <svg class="deadline-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                             <span><strong>Posted:</strong> ${formattedRelease}</span>
+                        </div>
+                        <div class="deadline-row">
+                             <svg class="deadline-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                             <span><strong>Closes:</strong> ${formattedDeadline}</span>
+                        </div>
                     </div>
                     <a href="${fund.apply_link || '#'}" target="_blank" class="apply-btn" onclick="event.stopPropagation()">
                         Apply
@@ -215,14 +224,25 @@ function closeModal() {
 // WhatsApp Registration
 function registerWhatsApp() {
     const phoneInput = document.getElementById('whatsappPhone');
+    const interestInput = document.getElementById('whatsappInterest');
     const phone = phoneInput.value.trim();
+    const interest = interestInput.value;
     
     if (!phone || phone.length < 10) {
         alert("Please enter a valid phone number!");
         return;
     }
-    // Simulate cloud sync for now
-    alert("Successfully joined WhatsApp Alerts! ✅\nYou'll receive updates for: " + activeFilter);
+
+    // Count matching funds for instant gratification
+    const count = allFunds.filter(f => f.category === interest || interest === 'All').length;
+    
+    const msg = `Successfully joined WhatsApp Alerts! ✅\n\nFound ${count} matching funds for "${interest}".\nRedirecting you to WhatsApp to confirm...`;
+    alert(msg);
+    
+    // Redirect to WhatsApp with a pre-filled message
+    const waMsg = encodeURIComponent(`Hi! I want to receive alerts for ${interest} startup funds on my number ${phone}.`);
+    window.open(`https://wa.me/918260797177?text=${waMsg}`, '_blank');
+    
     phoneInput.value = '';
 }
 
@@ -261,7 +281,9 @@ function setupEventListeners() {
 // Dummy Data for Preview if table is empty
 function dummyDataForPreview() {
     const nextMonth = new Date();
+    const lastWeek = new Date();
     nextMonth.setMonth(nextMonth.getMonth() + 1);
+    lastWeek.setDate(lastWeek.getDate() - 7);
     
     return [
         {
@@ -273,6 +295,7 @@ function dummyDataForPreview() {
             eligibility: "DPIIT-recognized startups incorporated less than 2 years ago.",
             category: "Government Funds",
             apply_link: "https://seedfund.startupindia.gov.in/",
+            release_date: lastWeek.toISOString().split('T')[0],
             deadline: nextMonth.toISOString().split('T')[0]
         },
         {
@@ -284,6 +307,7 @@ function dummyDataForPreview() {
             eligibility: "Global startups looking for seed capital and intense 3-month mentoring.",
             category: "Private Seed Funds",
             apply_link: "https://www.ycombinator.com/apply",
+            release_date: lastWeek.toISOString().split('T')[0],
             deadline: nextMonth.toISOString().split('T')[0]
         },
         {
@@ -295,39 +319,7 @@ function dummyDataForPreview() {
             eligibility: "Founders with a scalable tech business idea. iSAFE notes used.",
             category: "Private Seed Funds",
             apply_link: "https://www.100x.vc/",
-            deadline: nextMonth.toISOString().split('T')[0]
-        },
-        {
-            id: 4,
-            company_name: "Sequoia Surge - Series A",
-            funding_stage: "Series A",
-            amount_offered: "$1M - $2M",
-            investor: "Sequoia Capital",
-            eligibility: "Proven business model with early market traction.",
-            category: "Series A",
-            apply_link: "https://www.surgeahead.com/",
-            deadline: nextMonth.toISOString().split('T')[0]
-        },
-        {
-            id: 5,
-            company_name: "Tiger Global Growth",
-            funding_stage: "Series B",
-            amount_offered: "$10M+",
-            investor: "Tiger Global",
-            eligibility: "Rapidly scaling startups aiming for market dominance.",
-            category: "Series B & C",
-            apply_link: "https://www.tigerglobal.com/",
-            deadline: nextMonth.toISOString().split('T')[0]
-        },
-        {
-            id: 6,
-            company_name: "Goldman Sachs Bridge Fund",
-            funding_stage: "Bridge/Pre-IPO",
-            amount_offered: "$50M+",
-            investor: "Goldman Sachs",
-            eligibility: "Late-stage startups preparing for a public listing exit.",
-            category: "Bridge/Pre-IPO",
-            apply_link: "https://www.goldmansachs.com/",
+            release_date: lastWeek.toISOString().split('T')[0],
             deadline: nextMonth.toISOString().split('T')[0]
         }
     ];

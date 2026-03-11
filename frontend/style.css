@@ -185,6 +185,28 @@ body {
   align-items: center;
   text-align: center;
   animation: scaleIn 0.8s var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.whatsapp-widget::after {
+  content: 'LIVE';
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 4px 8px;
+  background: #25D366;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 800;
+  border-radius: 4px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
 .whatsapp-title {
@@ -359,15 +381,26 @@ body {
 
 .deadline {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
   color: var(--text-tertiary);
   font-weight: 500;
 }
 
+.deadline-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .deadline-icon {
   color: var(--warning);
+  opacity: 0.8;
+}
+
+.deadline strong {
+  color: var(--text-secondary);
 }
 
 .apply-btn {

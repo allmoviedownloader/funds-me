@@ -44,9 +44,16 @@
                     Receive Alerts on WhatsApp
                 </div>
                 <p style="color: var(--text-secondary); font-size: 0.9rem;">Get latest funds directly on your mobile based on your interests.</p>
-                <div class="whatsapp-input-group">
-                    <input type="tel" id="whatsappPhone" class="whatsapp-input" placeholder="+91 99XXXXXXX">
-                    <button class="whatsapp-btn" onclick="registerWhatsApp()">Join Now</button>
+                <div class="whatsapp-input-group" style="flex-direction: column; gap: 10px;">
+                    <select id="whatsappInterest" class="whatsapp-input" style="width: 100%;">
+                        <option value="All">All Opportunities</option>
+                        <option value="Government Funds">Government Challenges</option>
+                        <option value="Private Seed Funds">Private Startup Funds</option>
+                    </select>
+                    <div style="display: flex; gap: 12px; width: 100%;">
+                        <input type="tel" id="whatsappPhone" class="whatsapp-input" placeholder="+91 99XXXXXXX">
+                        <button class="whatsapp-btn" onclick="registerWhatsApp()">Join Now</button>
+                    </div>
                 </div>
             </div>
 
