@@ -210,6 +210,8 @@ body {
   will-change: transform, opacity;
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  content-visibility: auto;
+  contain-intrinsic-size: 100% 320px;
 }
 
 .fund-card::before {
