@@ -2,7 +2,17 @@
 const SUPABASE_URL = 'https://ukeeqgbsvjsazoqqpmxu.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZWVxZ2JzdmpzYXpvcXFwbXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODIyNjYsImV4cCI6MjA4ODY1ODI2Nn0.tNPM0LQ2JSkHpBh-Gj-_8Q8StIsxSDXXdjca1b6cbbc';
 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const getSupabase = () => {
+    if (window.supabase) return window.supabase;
+    if (typeof supabase !== 'undefined') return supabase;
+    return null;
+};
+
+const client = getSupabase();
+if (!client) {
+    console.error("Supabase library not found!");
+}
+const supabaseClient = client ? client.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 // DOM Elements
 const fundsGrid = document.getElementById('fundsGrid');
@@ -128,21 +138,21 @@ function renderFunds() {
             card.innerHTML = `
                 <div class="card-header">
                     <div>
-                        <h3 class="card-title">${fund.company_name || fund.investor}</h3>
-                        <div class="card-investor">${fund.investor || fund.category}</div>
+                        <h3 class="card-title">${fund.company_name || 'New Opportunity'}</h3>
+                        <div class="card-investor">By ${fund.investor || fund.category}</div>
                     </div>
                     <span class="tag ${stageClass}">${fund.funding_stage || fund.category}</span>
                 </div>
-                <div class="card-amount">${fund.amount_offered || 'As per requirement'}</div>
-                <div class="card-details">${fund.eligibility || 'No specific eligibility mentioned. Open to view details.'}</div>
+                <div class="card-amount">${fund.amount_offered || 'Grant'}</div>
+                <div class="card-challenge">${fund.challenge_info ? `<strong>Problem Statement:</strong> ${fund.challenge_info}` : ''}</div>
+                <div class="card-details">${fund.eligibility || 'Click to view details.'}</div>
                 <div class="card-footer">
                     <div class="deadline">
                         <svg class="deadline-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                        <span>${formattedDeadline}</span>
+                        <span>Deadline: ${formattedDeadline}</span>
                     </div>
                     <a href="${fund.apply_link || '#'}" target="_blank" class="apply-btn" onclick="event.stopPropagation()">
-                        Apply 
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+                        Apply
                     </a>
                 </div>
             `;

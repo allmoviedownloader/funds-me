@@ -7,6 +7,9 @@ from datetime import datetime
 import socket
 from bs4 import BeautifulSoup
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --- PATCH FOR FORCING IPv4 ---
 orig_getaddrinfo = socket.getaddrinfo
@@ -19,9 +22,9 @@ socket.getaddrinfo = patched_getaddrinfo
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # --- CONFIGURATION ---
-GEMINI_API_KEY = "AIzaSyD1eCR-MKcWPrhFg4gOLf0tCyMOLVV2E1w"
-SUPABASE_URL = "https://ukeeqgbsvjsazoqqpmxu.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZWVxZ2JzdmpzYXpvcXFwbXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODIyNjYsImV4cCI6MjA4ODY1ODI2Nn0.tNPM0LQ2JSkHpBh-Gj-_8Q8StIsxSDXXdjca1b6cbbc"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 SUPABASE_HEADERS = {
     "apikey": SUPABASE_KEY,
@@ -37,7 +40,21 @@ TARGETS = [
     {"name": "Startup India", "url": "https://seedfund.startupindia.gov.in/", "type": "portal"},
     {"name": "BIRAC BIG", "url": "https://birac.nic.in/desc_new.php?id=77", "type": "portal"},
     {"name": "MeitY Hub", "url": "https://meitystartuphub.in/schemes", "type": "portal"},
-    {"name": "100X.VC", "url": "https://www.100x.vc/", "type": "portal"}
+    {"name": "100X.VC", "url": "https://www.100x.vc/", "type": "portal"},
+    {"name": "Antler", "url": "https://www.antler.co/india", "type": "portal"},
+    {"name": "Google for Startups", "url": "https://startup.google.com/accelerator/", "type": "portal"},
+    {"name": "LetsVenture", "url": "https://letsventure.com/", "type": "portal"},
+    {"name": "AngelList India", "url": "https://www.angellistindia.com/", "type": "portal"},
+    {"name": "Venture Catalysts", "url": "https://venturecatalysts.in/", "type": "portal"},
+    {"name": "ah! Ventures", "url": "https://www.ahventures.in/", "type": "portal"},
+    {"name": "Ketto", "url": "https://www.ketto.org/", "type": "portal"},
+    {"name": "ImpactGuru", "url": "https://www.impactguru.com/", "type": "portal"},
+    {"name": "Pepcorns", "url": "https://www.pepcorns.com/", "type": "portal"},
+    {"name": "Invest India", "url": "https://www.investindia.gov.in/social-impact-funding", "type": "portal"},
+    {"name": "CSR Box", "url": "https://csrbox.org/list-NGO-grants-India", "type": "portal"},
+    {"name": "StartupHub Bengal", "url": "https://startuphub.wb.gov.in/", "type": "portal"},
+    {"name": "Kerala Startup Mission", "url": "https://startupmission.kerala.gov.in/schemes", "type": "portal"},
+    {"name": "Karnataka Startup", "url": "https://startup.karnataka.gov.in/", "type": "portal"}
 ]
 
 def fetch_page_text(url):
@@ -67,11 +84,12 @@ def process_text_with_gemini(raw_text, source_name, source_url):
     Source: {source_name} ({source_url})
     
     JSON Fields:
-    - company_name: Name of the startup or fund.
+    - company_name: Name of the startup, fund, or Challenge Program.
     - funding_stage: Idea Stage, Seed, Grant, Series A, Series B & C, or Bridge/Pre-IPO.
-    - amount_offered: Amount (e.g. $100k, Undisclosed).
-    - investor: Provided by.
-    - eligibility: 1 sentence description.
+    - amount_offered: Amount (e.g. ₹50 Lakhs, $100k, Undisclosed).
+    - investor: Government Ministry, VC, or Organization providing funds.
+    - eligibility: 1 sentence description of who can apply.
+    - challenge_info: If this is a 'Challenge' or 'Hackathon', describe the specific problem statement or goal (e.g., 'Solving waste management in smart cities').
     - category: Government Funds, Private Seed Funds, Series A, Series B & C, Bridge/Pre-IPO, Idea Stage, or Others.
     - apply_link: Official apply URL. Default to {source_url}.
     - deadline: YYYY-MM-DD or null.

@@ -267,14 +267,22 @@ body {
   letter-spacing: -1px;
 }
 
+.card-challenge {
+  font-size: 0.85rem;
+  color: var(--accent-primary);
+  margin-bottom: 8px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
 .card-details {
   flex-grow: 1;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
   margin-bottom: 24px;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
