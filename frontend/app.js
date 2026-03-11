@@ -99,7 +99,7 @@ function renderFunds() {
     if (activeFilter === 'Government Funds') {
         filtered = allFunds.filter(f => (f.category || '').includes('Government'));
     } else if (activeFilter === 'Big Companies') {
-        const bigCorps = ['Google', 'Microsoft', 'Amazon', 'Meta', 'Tata', 'Reliance', 'Adobe', 'Apple', 'Y Combinator', 'Sequoia', 'Tiger Global', 'Goldman Sachs'];
+        const bigCorps = ['Google', 'Microsoft', 'Amazon', 'Meta', 'Tata', 'Reliance', 'Adobe', 'Apple', 'Y Combinator', 'Sequoia', 'Tiger Global', 'Goldman Sachs', 'Visa', 'Stripe', 'IBM', 'Oracle'];
         filtered = allFunds.filter(f => 
             bigCorps.some(name => 
                 (f.company_name && f.company_name.toLowerCase().includes(name.toLowerCase())) || 
@@ -111,16 +111,38 @@ function renderFunds() {
             (f.funding_stage && f.funding_stage.toLowerCase().includes('idea')) ||
             (f.category && f.category.toLowerCase().includes('idea'))
         );
+    } else if (activeFilter === 'Urgent') {
+        const now = new Date();
+        const twoDaysFromNow = new Date(now.getTime() + (48 * 60 * 60 * 1000));
+        filtered = allFunds.filter(f => {
+            if (!f.deadline) return false;
+            const dDate = new Date(f.deadline);
+            return dDate > now && dDate <= twoDaysFromNow;
+        });
     }
     
-    // Filter by Search
+    // Filter by Search (Smart Search)
     if (searchQuery) {
         const q = searchQuery.toLowerCase();
-        filtered = filtered.filter(f => 
-            (f.company_name && f.company_name.toLowerCase().includes(q)) ||
-            (f.investor && f.investor.toLowerCase().includes(q)) ||
-            (f.funding_stage && f.funding_stage.toLowerCase().includes(q))
-        );
+        filtered = filtered.filter(f => {
+            const companyMatch = (f.company_name || '').toLowerCase().includes(q);
+            const investorMatch = (f.investor || '').toLowerCase().includes(q);
+            const stageMatch = (f.funding_stage || '').toLowerCase().includes(q);
+            const categoryMatch = (f.category || '').toLowerCase().includes(q);
+            const amountMatch = (f.amount_offered || '').toLowerCase().includes(q);
+            
+            // Check for potential amount matches like "100k" or "50 Lakhs"
+            const queryIsNumber = !isNaN(parseFloat(q.replace(/[^0-9.]/g, '')));
+            if (queryIsNumber) {
+                const numericQuery = parseFloat(q.replace(/[^0-9.]/g, ''));
+                const amountText = (f.amount_offered || '').toLowerCase();
+                const numericAmount = parseFloat(amountText.replace(/[^0-9.]/g, ''));
+                if (numericAmount === numericQuery) return true;
+                if (amountText.includes(q)) return true;
+            }
+
+            return companyMatch || investorMatch || stageMatch || categoryMatch || amountMatch;
+        });
     }
     
     if (filtered.length === 0) {

@@ -173,6 +173,18 @@ body {
   box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
 }
 
+.urgent-pill {
+  border: 1px dashed var(--warning) !important;
+  color: var(--warning) !important;
+}
+
+.urgent-pill.active {
+  background: linear-gradient(135deg, var(--warning) 0%, #ea580c 100%) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(234, 88, 12, 0.4) !important;
+}
+
 
 /* ===== CARDS GRID ===== */
 .cards-grid {

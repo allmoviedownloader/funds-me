@@ -49,6 +49,13 @@ TARGETS = [
     {"name": "MeitY Hub", "url": "https://meitystartuphub.in/schemes", "type": "portal"},
     {"name": "Invest India", "url": "https://www.investindia.gov.in/social-impact-funding", "type": "portal"},
     {"name": "CSR Box", "url": "https://csrbox.org/list-NGO-grants-India", "type": "portal"},
+    {"name": "MIT Innovation", "url": "https://innovation.mit.edu/opportunities/", "type": "portal"},
+    {"name": "Stanford Startup Garage", "url": "https://www.gsb.stanford.edu/programs/startup-garage", "type": "portal"},
+    {"name": "Oxford Seed Fund", "url": "https://www.sbs.ox.ac.uk/oxford-seed-fund", "type": "portal"},
+    {"name": "Harvard Innovation Labs", "url": "https://innovationlabs.harvard.edu/", "type": "portal"},
+    {"name": "UN Innovation Hub", "url": "https://innovation.un.org/", "type": "portal"},
+    {"name": "World Bank SIEF", "url": "https://www.worldbank.org/en/programs/sief-trust-fund", "type": "portal"},
+    {"name": "Horizon Europe", "url": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/home", "type": "portal"},
     {"name": "Crunchbase Funding News", "url": "https://news.crunchbase.com/category/funding/", "type": "news"}
 ]
 
@@ -104,7 +111,8 @@ def process_text_with_gemini(raw_text, source_name, source_url):
     
     prompt = f"""
     Extract startup funding, grants, or seed fund programs from the text below.
-    CRITICAL: Identify if the program is "Global" or "Worldwide" (available to founders anywhere).
+    CRITICAL: Verify if the program is "Global/Worldwide" or "Open to Indian Founders". 
+    If it is restricted to a specific non-India country (e.g. "US Residents Only"), EXCLUDE it unless it's a major global program.
     Source: {source_name} ({source_url})
     
     JSON Fields:
@@ -112,12 +120,12 @@ def process_text_with_gemini(raw_text, source_name, source_url):
     - funding_stage: Idea Stage, Seed, Grant, Series A, Series B & C, or Bridge/Pre-IPO.
     - amount_offered: Amount (e.g. ₹50 Lakhs, $100k, Undisclosed).
     - investor: Government Ministry, VC, or Organization providing funds.
-    - eligibility: 1 sentence description. MUST mention if it's "Worldwide" or restricted to a specific country.
+    - eligibility: 1-2 sentence description. MUST EXPLICITLY mention "Open to Indian Founders" or "Worldwide" if confirmed.
     - challenge_info: If this is a 'Challenge' or 'Hackathon', describe the specific problem statement.
     - category: Government Funds, Private Seed Funds, Series A, Series B & C, Bridge/Pre-IPO, Idea Stage, or Others.
     - apply_link: Official apply URL. Default to {source_url}.
     - release_date: YYYY-MM-DD (Announcement date) or null.
-    - deadline: YYYY-MM-DD or null.
+    - deadline: YYYY-MM-DD HH:MM:SS or null. (Use the end of the day if time not specified).
     
     RETURN ONLY A CLEAN JSON ARRAY. NO MARKDOWN.
     ---
@@ -136,8 +144,8 @@ def process_text_with_gemini(raw_text, source_name, source_url):
             res_json = res.json()
             
             if res.status_code == 429:
-                logging.warning(f"Rate limited (429). Retrying in 5s (Attempt {attempt+1})...")
-                time.sleep(5)
+                logging.warning(f"Rate limited (429). Retrying in 10s (Attempt {attempt+1})...")
+                time.sleep(10)
                 continue
 
             if 'candidates' in res_json:
@@ -152,11 +160,13 @@ def process_text_with_gemini(raw_text, source_name, source_url):
     return []
 
 def cleanup_expired_funds():
-    today = datetime.now().strftime("%Y-%m-%d")
-    logging.info(f"Cleaning up expired funds before {today}...")
+    now_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logging.info(f"Cleaning up expired funds before {now_ts}...")
     try:
-        requests.delete(f"{SUPABASE_URL}/rest/v1/funds?deadline=lt.{today}", headers=SUPABASE_HEADERS, timeout=10)
-    except: pass
+        # Using Supabase delete with filter for expired deadlines
+        requests.delete(f"{SUPABASE_URL}/rest/v1/funds?deadline=lt.{now_ts}", headers=SUPABASE_HEADERS, timeout=10)
+    except Exception as e:
+        logging.error(f"Cleanup Error: {e}")
 
 def push_to_supabase(funds):
     if not funds: return
@@ -166,15 +176,14 @@ def push_to_supabase(funds):
             # Check for existing
             res = requests.post(insert_url, json=fund, headers=SUPABASE_HEADERS, timeout=10)
             if res.status_code in [200, 201]:
-                logging.info(f"✅ Sync Successful: {fund.get('company_name')[:25]}")
+                logging.info(f"Sync Successful: {fund.get('company_name')[:25]}")
             else:
-                # Often fails due to duplicate name if unique constraint is on, which is fine
                 logging.debug(f"Sync Skip/Fail ({res.status_code}): {fund.get('company_name')}")
         except Exception as e:
-            logging.error(f"❌ Network Error: {e}")
+            logging.error(f"Network Error: {e}")
 
-def main():
-    logging.info("\U0001f680 STARTING MASSIVE SCALE SCRAPE...")
+def run_task():
+    logging.info("--- STARTING SCHEDULED SCRAPE TASK ---")
     cleanup_expired_funds()
     
     # 1. Scrape standard targets
@@ -188,7 +197,7 @@ def main():
 
     # 2. Scrape Search Queries for massive volume
     for query in SEARCH_QUERIES:
-        logging.info(f"\U0001f50d Searching for: {query}")
+        logging.info(f"Searching for: {query}")
         search_url = f"https://www.google.com/search?q={query.replace(' ', '+')}&tbm=nws"
         text = fetch_page_text(search_url)
         if text:
@@ -197,7 +206,15 @@ def main():
                 push_to_supabase(extracted)
         time.sleep(5)
     
-    logging.info("\u2728 MASSIVE SCALE JOB FINISHED")
+    logging.info("--- SCHEDULED TASK FINISHED ---")
+
+def main():
+    # If running manually, it runs once. 
+    # To run every 12 hours on a server, use:
+    # while True:
+    #     run_task()
+    #     time.sleep(12 * 3600)
+    run_task()
 
 if __name__ == "__main__":
     main()
