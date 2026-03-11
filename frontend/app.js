@@ -101,7 +101,7 @@ function renderFunds() {
     // Filter by Category
     let filtered = allFunds;
     if (activeFilter === 'Government Funds') {
-        filtered = allFunds.filter(f => f.category === 'Government Funds');
+        filtered = allFunds.filter(f => (f.category || '').includes('Government'));
     } else if (activeFilter === 'Big Companies') {
         const bigCorps = ['Google', 'Microsoft', 'Amazon', 'Meta', 'Tata', 'Reliance', 'Adobe', 'Apple', 'Y Combinator', 'Sequoia', 'Tiger Global', 'Goldman Sachs'];
         filtered = allFunds.filter(f => 
