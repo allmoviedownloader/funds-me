@@ -34,16 +34,12 @@ let searchQuery = '';
 // Initialize
 async function init() {
     console.log("Initializing Dashboard...");
-    setupEventListeners(); // Setup listeners first so UI is responsive
+    setupEventListeners();
+    
     try {
-        // Race fetch against a 5s timeout
-        const fetchPromise = fetchFunds();
-        const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error("Fetch Timeout")), 5000)
-        );
-        await Promise.race([fetchPromise, timeoutPromise]);
+        await fetchFunds();
     } catch (e) {
-        console.warn("Initial fetch timed out or failed. Using fallback.", e);
+        console.warn("Initial fetch failed. Using fallback.", e);
         if (allFunds.length === 0) {
             allFunds = dummyDataForPreview();
             renderFunds();
@@ -226,33 +222,6 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
-// WhatsApp Registration
-function registerWhatsApp() {
-    const phoneInput = document.getElementById('waPhone');
-    const categorySelect = document.getElementById('waCategory');
-    const phone = phoneInput.value.trim();
-    const category = categorySelect.value;
-    
-    if (phone.length < 10) {
-        alert("Please enter a valid WhatsApp number.");
-        return;
-    }
-
-    // Interactive Trigger Message
-    const msg = encodeURIComponent(`Hi! I want to join Funds Me alerts for ${category}. Please send me the latest details.`);
-    const waLink = `https://wa.me/YOUR_BOT_NUMBER?text=${msg}`;
-    
-    // UI Feedback
-    const btn = document.querySelector('.whatsapp-btn');
-    btn.innerHTML = 'Connecting to Bot... 🤖';
-    btn.style.background = '#075E54';
-
-    setTimeout(() => {
-        window.open(waLink, '_blank');
-        btn.innerHTML = 'Join Alerts';
-        btn.style.background = '';
-    }, 1500);
-}
 
 // Event Listeners
 function setupEventListeners() {

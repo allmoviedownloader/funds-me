@@ -1,7 +1,13 @@
 # Backend
-backend/.env
-backend/__pycache__/
+.env
+__pycache__
 *.pyc
+selenium_sessions/
+pairing_code.txt
+pairing_screen.png
+qr_code.png
+page_source.html
+*.png
 
 # Frontend
 node_modules/
