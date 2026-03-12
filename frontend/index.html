@@ -12,6 +12,8 @@
     <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <link rel="icon" type="image/png" href="logo.png">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,7 +21,10 @@
         <!-- Header Section -->
         <header class="hero">
             <div class="hero-content">
-                <h1>Funds Me</h1>
+                <div class="logo-lockup">
+                    <img src="logo.png" alt="Funds Me Logo" class="app-logo">
+                    <h1>Funds Me</h1>
+                </div>
                 <p>Discover & Apply to Startup Funds, Grants & Accelerators worldwide.</p>
                 <div class="search-bar-container">
                     <input type="text" id="searchInput" class="search-input" placeholder="Search by name, stage, or investor...">
@@ -42,11 +47,9 @@
 
             <!-- Dashboard / Cards Grid -->
             <div class="cards-grid" id="fundsGrid">
-                <!-- Loader -->
-                <div class="loader-container" id="loader">
-                    <div class="spinner"></div>
-                </div>
-                <!-- Cards will be injected dynamically here -->
+            <!-- Dashboard / Cards Grid -->
+            <div class="cards-grid" id="fundsGrid">
+                <!-- Data / Skeletons injected dynamically -->
             </div>
             
             <!-- Empty State -->

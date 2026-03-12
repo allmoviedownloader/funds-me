@@ -16,7 +16,6 @@ const supabaseClient = client ? client.createClient(SUPABASE_URL, SUPABASE_ANON_
 
 // DOM Elements
 const fundsGrid = document.getElementById('fundsGrid');
-const loader = document.getElementById('loader');
 const emptyState = document.getElementById('emptyState');
 const filterContainer = document.getElementById('filterContainer');
 const searchInput = document.getElementById('searchInput');
@@ -49,7 +48,6 @@ async function init() {
             allFunds = dummyDataForPreview();
             performFiltering();
         }
-        loader.style.display = 'none';
     }
 }
 
@@ -79,7 +77,6 @@ async function fetchFunds() {
         console.error('Error fetching funds:', err);
         allFunds = dummyDataForPreview();
     } finally {
-        loader.style.display = 'none';
         performFiltering();
     }
 }
@@ -88,6 +85,8 @@ async function fetchFunds() {
 
 // 1. Filtering Logic (Run once on data change or search/filter change)
 function performFiltering() {
+    renderSkeletons();
+    
     let filtered = allFunds;
     
     // Category Filter
@@ -127,8 +126,33 @@ function performFiltering() {
 
     filteredFunds = filtered;
     currentIndex = 0;
+    
+    // Smooth transition from skeletons to actual content
+    setTimeout(() => {
+        fundsGrid.innerHTML = '';
+        renderBatch();
+    }, filteredFunds.length > 0 ? 400 : 0); // Short delay for shimmer effect
+}
+
+function renderSkeletons() {
     fundsGrid.innerHTML = '';
-    renderBatch();
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < 6; i++) {
+        const skeleton = document.createElement('div');
+        skeleton.className = 'skeleton-card';
+        skeleton.innerHTML = `
+            <div class="skeleton-shimmer"></div>
+            <div class="skeleton-content">
+                <div class="skeleton-line skeleton-title"></div>
+                <div class="skeleton-line skeleton-text"></div>
+                <div class="skeleton-line skeleton-big"></div>
+                <div class="skeleton-line skeleton-para"></div>
+                <div class="skeleton-line skeleton-text" style="margin-top: 20px;"></div>
+            </div>
+        `;
+        fragment.appendChild(skeleton);
+    }
+    fundsGrid.appendChild(fragment);
 }
 
 let isRendering = false;
