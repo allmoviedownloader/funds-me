@@ -19,6 +19,7 @@ const fundsGrid = document.getElementById('fundsGrid');
 const emptyState = document.getElementById('emptyState');
 const filterContainer = document.getElementById('filterContainer');
 const searchInput = document.getElementById('searchInput');
+const lastUpdatedText = document.getElementById('lastUpdatedText');
 
 // Modal Elements
 const modalOverlay = document.getElementById('modalOverlay');
@@ -71,7 +72,15 @@ async function fetchFunds() {
                 ...f,
                 _searchText: `${f.company_name} ${f.investor} ${f.amount_offered} ${f.eligibility} ${f.category} ${f.funding_stage}`.toLowerCase()
             }));
+
             if (allFunds.length === 0) allFunds = dummyDataForPreview();
+            
+            // Update "Last Updated" text
+            if (allFunds.length > 0) {
+                const newest = allFunds.reduce((a, b) => new Date(a.created_at) > new Date(b.created_at) ? a : b);
+                const updateTime = new Date(newest.created_at);
+                lastUpdatedText.innerText = `Last updated: ${updateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`;
+            }
         }
     } catch (err) {
         console.error('Error fetching funds:', err);
