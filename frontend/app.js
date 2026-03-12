@@ -34,6 +34,7 @@ let searchQuery = '';
 let searchTimeout = null;
 const BATCH_SIZE = 20;
 let currentIndex = 0;
+let renderTimeout = null;
 
 // Initialize
 async function init() {
@@ -55,7 +56,6 @@ async function init() {
 // Fetch data from Supabase
 async function fetchFunds() {
     try {
-        loader.style.display = 'flex';
         const { data, error } = await supabaseClient
             .from('funds')
             .select('*')
@@ -136,11 +136,17 @@ function performFiltering() {
     filteredFunds = filtered;
     currentIndex = 0;
     
-    // Smooth transition from skeletons to actual content
-    setTimeout(() => {
+    // Clear any pending render to prevent slowness/collisions
+    if (renderTimeout) clearTimeout(renderTimeout);
+    
+    // If we have data, show skeletons briefly OR show data immediately if cached
+    const needsWait = allFunds.length === 0; // Only wait on initial load
+    
+    renderTimeout = setTimeout(() => {
         fundsGrid.innerHTML = '';
         renderBatch();
-    }, filteredFunds.length > 0 ? 400 : 0); // Short delay for shimmer effect
+        renderTimeout = null;
+    }, needsWait ? 400 : 50); 
 }
 
 function renderSkeletons() {

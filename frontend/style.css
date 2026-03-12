@@ -265,8 +265,6 @@ body {
   transform-origin: center;
   position: relative;
   overflow: hidden;
-  will-change: transform, opacity;
-  cursor: pointer;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   content-visibility: auto;
   contain-intrinsic-size: 100% 320px;
@@ -681,6 +679,12 @@ body {
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer, .pulse-dot::after {
+    animation: none;
+  }
 }
 
 .skeleton-content {
