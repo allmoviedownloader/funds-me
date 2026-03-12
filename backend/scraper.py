@@ -120,9 +120,14 @@ def process_text_with_gemini(raw_text, source_name, source_url):
     
     prompt = f"""
     Extract startup funding, grants, or seed fund programs from the text below.
-    CRITICAL: Verify if the program is "Global/Worldwide" or "Open to Indian Founders". 
-    If it is restricted to a specific non-India country (e.g. "US Residents Only"), EXCLUDE it unless it's a major global program.
-    Source: {source_name} ({source_url})
+    CRITICAL: 
+    1. Verify if the program is "Global/Worldwide" or "Open to Indian Founders".
+    2. FIND THE DIRECT APPLICATION LINK. If the text mentions a link like 'apply here' or 'portal', extract that.
+    3. If you CANNOT find a direct official application URL, set 'apply_link' to null. 
+    4. DO NOT use news article links (e.g. techcrunch.com/article...) as 'apply_link'.
+    5. If a program is restricted to a specific non-India country (e.g. "US Residents Only"), EXCLUDE it.
+    
+    Source: {source_name}
     
     JSON Fields:
     - company_name: Name of the startup, fund, or Challenge Program.
@@ -130,11 +135,11 @@ def process_text_with_gemini(raw_text, source_name, source_url):
     - amount_offered: Amount (e.g. ₹50 Lakhs, $100k, Undisclosed).
     - investor: Government Ministry, VC, or Organization providing funds.
     - eligibility: 1-2 sentence description. MUST EXPLICITLY mention "Open to Indian Founders" or "Worldwide" if confirmed.
-    - challenge_info: If this is a 'Challenge' or 'Hackathon', describe the specific problem statement.
+    - challenge_info: Describe the specific problem statement.
     - category: Government Funds, Private Seed Funds, Series A, Series B & C, Bridge/Pre-IPO, Idea Stage, or Others.
-    - apply_link: Official apply URL. Default to {source_url}.
-    - release_date: YYYY-MM-DD (Announcement date) or null.
-    - deadline: YYYY-MM-DD HH:MM:SS or null. (Use the end of the day if time not specified).
+    - apply_link: DIRECT OFFICIAL APPLY URL or null.
+    - release_date: YYYY-MM-DD or null.
+    - deadline: YYYY-MM-DD HH:MM:SS or null.
     
     RETURN ONLY A CLEAN JSON ARRAY. NO MARKDOWN.
     ---
@@ -182,6 +187,19 @@ def push_to_supabase(funds):
     insert_url = f"{SUPABASE_URL}/rest/v1/funds"
     for fund in funds:
         try:
+            # Final Validation: Skip if no direct link
+            if not fund.get('apply_link') or "http" not in fund.get('apply_link'):
+                continue
+                
+            # Quick 404 Check
+            try:
+                check = requests.head(fund['apply_link'], timeout=5, allow_redirects=True)
+                if check.status_code >= 400:
+                    logging.warning(f"Skipping Broken Link ({check.status_code}): {fund['apply_link']}")
+                    continue
+            except:
+                pass # Proceed if head request fails for non-critical reasons
+                
             # Check for existing
             res = requests.post(insert_url, json=fund, headers=SUPABASE_HEADERS, timeout=10)
             if res.status_code in [200, 201]:
